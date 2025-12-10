@@ -29,11 +29,15 @@
             background: #0a0015;
             min-height: 100vh;
             overflow-x: hidden;
-            position: relative;
+            position: fixed;
+            width: 100%;
             color: #fff;
+            /* スマホ最適化 */
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
         }
 
-        /* 激しく動く背景レイヤー */
+        /* 激しく動く背景レイヤー - モバイル最適化 */
         body::before {
             content: '';
             position: fixed;
@@ -48,9 +52,11 @@
             animation: backgroundShift 8s ease-in-out infinite;
             pointer-events: none;
             z-index: 0;
+            will-change: transform;
+            transform: translateZ(0);
         }
 
-        /* 虹色のオーラ */
+        /* 虹色のオーラ - モバイル最適化 */
         body::after {
             content: '';
             position: fixed;
@@ -74,15 +80,16 @@
             z-index: 0;
             filter: blur(100px);
             transform: translate(-50%, -50%);
+            will-change: transform, opacity;
         }
 
         @keyframes backgroundShift {
             0%, 100% { 
-                transform: scale(1) rotate(0deg);
+                transform: translateZ(0) scale(1) rotate(0deg);
                 opacity: 1;
             }
             50% { 
-                transform: scale(1.5) rotate(180deg);
+                transform: translateZ(0) scale(1.2) rotate(90deg);
                 opacity: 0.7;
             }
         }
@@ -98,8 +105,8 @@
                 transform: translate(-50%, -50%) scale(1);
             }
             50% { 
-                opacity: 0.4;
-                transform: translate(-50%, -50%) scale(1.3);
+                opacity: 0.3;
+                transform: translate(-50%, -50%) scale(1.1);
             }
         }
 
@@ -116,63 +123,64 @@
 
         .star {
             position: absolute;
-            width: 3px;
-            height: 3px;
+            width: 2px;
+            height: 2px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px white, 0 0 20px rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 5px white;
             animation: starTwinkle 3s ease-in-out infinite;
+            will-change: opacity;
         }
 
         @keyframes starTwinkle {
             0%, 100% { 
                 opacity: 0.3;
-                transform: scale(1);
             }
             50% { 
                 opacity: 1;
-                transform: scale(1.5);
             }
         }
 
-        /* 流れ星エフェクト */
+        /* 流れ星エフェクト - モバイル最適化 */
         .shooting-star {
             position: fixed;
             width: 2px;
             height: 2px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 10px 2px white, 0 0 20px 4px rgba(255, 255, 255, 0.5);
+            box-shadow: 0 0 10px 2px white;
             animation: shoot 2s linear;
             pointer-events: none;
             z-index: 0;
+            will-change: transform, opacity;
         }
 
         @keyframes shoot {
             0% {
-                transform: translateX(0) translateY(0);
+                transform: translate3d(0, 0, 0);
                 opacity: 1;
             }
             100% {
-                transform: translateX(300px) translateY(300px);
+                transform: translate3d(300px, 300px, 0);
                 opacity: 0;
             }
         }
 
-        /* ネオンパーティクル */
+        /* ネオンパーティクル - モバイル最適化 */
         .neon-particle {
             position: fixed;
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 5;
             animation: float-neon 4s ease-out;
+            will-change: transform, opacity;
         }
 
         @keyframes float-neon {
             0% {
-                transform: translateY(0) scale(0);
+                transform: translate3d(0, 0, 0) scale(0);
                 opacity: 0;
             }
             10% {
@@ -182,25 +190,32 @@
                 opacity: 1;
             }
             100% {
-                transform: translateY(-150vh) scale(1.5);
+                transform: translate3d(0, -100vh, 0) scale(1.5);
                 opacity: 0;
             }
         }
 
         .container {
-            position: relative;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 1;
             max-width: 450px;
             margin: 0 auto;
             padding: 20px;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
         }
 
         header {
             text-align: center;
-            padding: 40px 0;
+            padding: 40px 0 20px;
             animation: explosiveEntrance 1s ease-out;
             position: relative;
         }
@@ -208,16 +223,11 @@
         @keyframes explosiveEntrance {
             0% {
                 opacity: 0;
-                transform: scale(0.3) rotate(-10deg);
-                filter: blur(20px);
-            }
-            60% {
-                transform: scale(1.1) rotate(3deg);
+                transform: translate3d(0, -20px, 0) scale(0.8);
             }
             100% {
                 opacity: 1;
-                transform: scale(1) rotate(0deg);
-                filter: blur(0);
+                transform: translate3d(0, 0, 0) scale(1);
             }
         }
 
@@ -225,9 +235,10 @@
         header::after {
             content: '✦';
             position: absolute;
-            font-size: 3rem;
+            font-size: 2rem;
             animation: orbitSpin 4s linear infinite;
-            filter: drop-shadow(0 0 10px #FF006E) drop-shadow(0 0 20px #00F5FF) drop-shadow(0 0 30px #8B00FF);
+            filter: drop-shadow(0 0 10px #FF006E);
+            will-change: transform;
         }
 
         header::before {
@@ -246,14 +257,14 @@
 
         @keyframes orbitSpin {
             0% { 
-                transform: rotate(0deg) translateY(0);
+                transform: rotate(0deg);
                 opacity: 0.6;
             }
             50% {
                 opacity: 1;
             }
             100% { 
-                transform: rotate(360deg) translateY(0);
+                transform: rotate(360deg);
                 opacity: 0.6;
             }
         }
@@ -324,34 +335,32 @@
             }
         }
 
-        /* カードコンテナ */
+        /* カードコンテナ - モバイル最適化 */
         .main-card-container {
             perspective: 2000px;
             margin-bottom: 30px;
-            animation: cardDrop 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+            animation: cardDrop 1s ease-out 0.3s both;
         }
 
         @keyframes cardDrop {
             0% {
                 opacity: 0;
-                transform: translateY(-200px) rotateX(90deg) scale(0.5);
-            }
-            60% {
-                transform: translateY(20px) rotateX(-10deg) scale(1.05);
+                transform: translate3d(0, -50px, 0) scale(0.8);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) rotateX(0deg) scale(1);
+                transform: translate3d(0, 0, 0) scale(1);
             }
         }
 
-        /* 3Dフリップカード本体 */
+        /* 3Dフリップカード本体 - モバイル最適化 */
         .main-card {
             position: relative;
             width: 100%;
             min-height: 550px;
             transform-style: preserve-3d;
-            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: transform 1s ease-out;
+            will-change: transform;
         }
 
         .main-card.flipped {
@@ -627,7 +636,7 @@
             padding: 10px;
         }
 
-        /* 決めるボタン */
+        /* 決めるボタン - モバイル最適化 */
         .decide-button {
             width: 100%;
             padding: 22px;
@@ -645,22 +654,20 @@
             font-weight: 900;
             font-family: 'Orbitron', sans-serif;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 5px;
             position: relative;
             overflow: hidden;
-            text-shadow: 
-                0 0 10px rgba(0, 0, 0, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.5);
-            animation: buttonRainbow 3s ease-in-out infinite, buttonFloat 3s ease-in-out infinite;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            animation: buttonRainbow 3s ease-in-out infinite;
             box-shadow: 
                 inset 0 0 30px rgba(255, 255, 255, 0.3),
-                0 0 40px rgba(255, 0, 110, 0.8),
-                0 0 60px rgba(0, 245, 255, 0.6),
-                0 0 80px rgba(139, 0, 255, 0.4),
-                0 10px 40px rgba(0, 0, 0, 0.8);
+                0 0 40px rgba(255, 0, 110, 0.6),
+                0 10px 30px rgba(0, 0, 0, 0.8);
             z-index: 2;
+            will-change: transform;
+            -webkit-tap-highlight-color: transparent;
         }
 
         @keyframes buttonRainbow {
@@ -669,15 +676,6 @@
             }
             50% {
                 background-position: 100% 50%;
-            }
-        }
-
-        @keyframes buttonFloat {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-5px);
             }
         }
 
@@ -691,58 +689,18 @@
             border-radius: 50%;
             background: radial-gradient(circle, 
                 rgba(255, 255, 255, 0.8) 0%, 
-                rgba(255, 0, 110, 0.4) 50%,
-                transparent 100%);
+                transparent 70%);
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
 
-        .decide-button::after {
-            content: '⚡';
-            position: absolute;
-            top: 50%;
-            left: -30px;
-            transform: translateY(-50%);
-            font-size: 2rem;
-            opacity: 0;
-            animation: lightning 2s ease-in-out infinite;
-        }
-
-        @keyframes lightning {
-            0%, 90%, 100% {
-                opacity: 0;
-                left: -30px;
-            }
-            45% {
-                opacity: 1;
-                left: 50%;
-            }
-        }
-
-        .decide-button:hover {
-            transform: translateY(-8px) scale(1.05);
-            box-shadow: 
-                inset 0 0 50px rgba(255, 255, 255, 0.5),
-                0 0 60px rgba(255, 0, 110, 1),
-                0 0 90px rgba(0, 245, 255, 0.8),
-                0 0 120px rgba(139, 0, 255, 0.6),
-                0 15px 50px rgba(0, 0, 0, 0.9);
-            animation: buttonShake 0.3s ease-in-out infinite, buttonRainbow 1s ease-in-out infinite;
-        }
-
-        @keyframes buttonShake {
-            0%, 100% { transform: translateY(-8px) scale(1.05) rotate(0deg); }
-            25% { transform: translateY(-8px) scale(1.05) rotate(-2deg); }
-            75% { transform: translateY(-8px) scale(1.05) rotate(2deg); }
-        }
-
         .decide-button:active {
-            transform: translateY(-3px) scale(0.98);
+            transform: scale(0.95);
         }
 
         .decide-button:active::before {
-            width: 500px;
-            height: 500px;
+            width: 300px;
+            height: 300px;
         }
 
         .decide-button:disabled {
@@ -1193,6 +1151,104 @@
             }
         }
 
+        /* 追加のモバイル最適化 */
+        @media (max-width: 480px) {
+            body::after {
+                width: 400px;
+                height: 400px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 0.9rem;
+            }
+            
+            header::before,
+            header::after {
+                font-size: 1.5rem;
+            }
+            
+            .card-face {
+                min-height: 500px;
+                padding: 30px 25px;
+            }
+            
+            .main-card {
+                min-height: 500px;
+            }
+            
+            .filter-label {
+                font-size: 0.85rem;
+            }
+            
+            select {
+                font-size: 1rem;
+                padding: 14px 45px 14px 18px;
+            }
+            
+            .decide-button {
+                font-size: 1.4rem;
+                padding: 18px;
+            }
+            
+            .result-title {
+                font-size: 1.7rem;
+            }
+            
+            .result-location {
+                font-size: 1rem;
+            }
+            
+            .result-section {
+                padding: 18px;
+            }
+            
+            .result-section-content {
+                font-size: 1.05rem;
+            }
+            
+            .tag {
+                font-size: 0.75rem;
+                padding: 8px 15px;
+            }
+        }
+
+        /* 横画面対応 */
+        @media (max-height: 700px) and (orientation: landscape) {
+            .container {
+                padding: 15px;
+            }
+            
+            header {
+                padding: 20px 0 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .subtitle {
+                font-size: 0.85rem;
+            }
+            
+            .card-face {
+                padding: 20px;
+                min-height: auto;
+            }
+            
+            .filter-group {
+                margin-bottom: 15px;
+            }
+            
+            .decide-button {
+                padding: 15px;
+                margin-top: 15px;
+            }
+        }
+
         .loading {
             display: inline-block;
             width: 50px;
@@ -1203,65 +1259,44 @@
             border-bottom-color: var(--neon-purple);
             border-left-color: var(--neon-gold);
             border-radius: 50%;
-            animation: spin 1s linear infinite, colorShift 2s ease-in-out infinite;
-            box-shadow: 
-                0 0 30px rgba(255, 0, 110, 0.6),
-                0 0 50px rgba(0, 245, 255, 0.4),
-                inset 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 30px rgba(255, 0, 110, 0.6);
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        @keyframes colorShift {
-            0%, 100% {
-                filter: hue-rotate(0deg) brightness(1);
-            }
-            50% {
-                filter: hue-rotate(180deg) brightness(1.5);
-            }
-        }
-
+        /* カードドロー演出 - モバイル最適化 */
         .main-card.drawing {
-            animation: explosiveDraw 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: explosiveDraw 1s ease-out;
         }
 
         @keyframes explosiveDraw {
             0% {
                 transform: scale(1) rotateY(0deg);
-                filter: brightness(1);
-            }
-            25% {
-                transform: scale(0.8) rotateY(45deg);
-                filter: brightness(2) saturate(2);
             }
             50% {
-                transform: scale(1.3) rotateY(90deg);
-                filter: brightness(3) saturate(3) hue-rotate(180deg);
-            }
-            75% {
-                transform: scale(0.9) rotateY(135deg);
-                filter: brightness(2) saturate(2);
+                transform: scale(1.1) rotateY(90deg);
+                filter: brightness(1.5);
             }
             100% {
                 transform: scale(1) rotateY(180deg);
-                filter: brightness(1);
             }
         }
 
+        /* カードがめくれた後の演出 - モバイル最適化 */
         .main-card.flipped {
-            animation: victoryPulse 2s ease-in-out;
+            animation: victoryPulse 1.5s ease-out;
         }
 
         @keyframes victoryPulse {
             0%, 100% {
                 transform: rotateY(180deg) scale(1);
-                filter: brightness(1);
             }
             50% {
-                transform: rotateY(180deg) scale(1.05);
-                filter: brightness(1.3) drop-shadow(0 0 50px rgba(255, 0, 110, 1));
+                transform: rotateY(180deg) scale(1.02);
+                filter: brightness(1.2);
             }
         }
     </style>
@@ -1373,7 +1408,7 @@
         // ========================================
         // LIFF設定
         // ========================================
-        const LIFF_ID = '2008621315-WjyqJ7mQ'; // ここにLIFF IDを入れてください
+        const LIFF_ID = '2008621315-WjyqJ7mQ'; // LINE Mini App用LIFF ID
 
         // ========================================
         // アクティビティデータベース（200件）
@@ -1529,7 +1564,8 @@
         // アプリの初期化処理
         // ========================================
         function createStars() {
-            for (let i = 0; i < 100; i++) {
+            // モバイル最適化：星の数を50に削減
+            for (let i = 0; i < 50; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
                 star.style.left = Math.random() * 100 + '%';
@@ -1551,8 +1587,8 @@
             setTimeout(() => shootingStar.remove(), 2000);
         }
 
-        // 定期的に流れ星を生成
-        setInterval(createShootingStar, 3000);
+        // 定期的に流れ星を生成（モバイル最適化：5秒に変更）
+        setInterval(createShootingStar, 5000);
 
         // 決めるボタンクリック
         decideBtn.addEventListener('click', () => {
@@ -1614,19 +1650,19 @@
             }, 100);
         });
 
-        // 爆発的なパーティクル生成
+        // 爆発的なパーティクル生成（モバイル最適化：15個に削減）
         function createExplosion() {
             const colors = ['#FF006E', '#00F5FF', '#8B00FF', '#FFD700', '#FF4500'];
-            for (let i = 0; i < 30; i++) {
+            for (let i = 0; i < 15; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'neon-particle';
                 particle.style.left = '50%';
                 particle.style.top = '50%';
                 particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                particle.style.boxShadow = `0 0 20px ${colors[Math.floor(Math.random() * colors.length)]}`;
+                particle.style.boxShadow = `0 0 15px ${colors[Math.floor(Math.random() * colors.length)]}`;
                 
-                const angle = (Math.PI * 2 * i) / 30;
-                const velocity = Math.random() * 100 + 50;
+                const angle = (Math.PI * 2 * i) / 15;
+                const velocity = Math.random() * 80 + 40;
                 const tx = Math.cos(angle) * velocity;
                 const ty = Math.sin(angle) * velocity;
                 
@@ -1634,26 +1670,26 @@
                 
                 document.body.appendChild(particle);
                 
-                setTimeout(() => particle.remove(), 4000);
+                setTimeout(() => particle.remove(), 3000);
             }
         }
 
-        // 勝利パーティクル生成
+        // 勝利パーティクル生成（モバイル最適化：20個に削減）
         function createVictoryParticles() {
             const colors = ['#FF006E', '#00F5FF', '#FFD700'];
-            for (let i = 0; i < 40; i++) {
+            for (let i = 0; i < 20; i++) {
                 setTimeout(() => {
                     const particle = document.createElement('div');
                     particle.className = 'neon-particle';
                     particle.style.left = Math.random() * 100 + '%';
                     particle.style.bottom = '0';
                     particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                    particle.style.boxShadow = `0 0 20px ${colors[Math.floor(Math.random() * colors.length)]}`;
-                    particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    particle.style.boxShadow = `0 0 15px ${colors[Math.floor(Math.random() * colors.length)]}`;
+                    particle.style.animationDuration = (Math.random() * 2 + 2) + 's';
                     document.body.appendChild(particle);
                     
-                    setTimeout(() => particle.remove(), 5000);
-                }, i * 50);
+                    setTimeout(() => particle.remove(), 4000);
+                }, i * 60);
             }
         }
 
