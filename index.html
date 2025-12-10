@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>今日なにする？ - 運命のアクティビティ</title>
+    <!-- LIFF SDK -->
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;900&family=Playfair+Display:wght@400;500;600;700;900&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Orbitron:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --neon-pink: #FF006E;
+            --neon-blue: #00F5FF;
+            --neon-purple: #8B00FF;
+            --neon-gold: #FFD700;
+            --neon-orange: #FF4500;
+            --deep-black: #0a0015;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            background: #0a0015;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        /* 激しく動く背景レイヤー */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 0, 110, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 245, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(139, 0, 255, 0.2) 0%, transparent 50%);
+            animation: backgroundShift 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 虹色のオーラ */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 600px;
+            height: 600px;
+            background: conic-gradient(
+                from 0deg,
+                #FF006E 0deg,
+                #FF4500 60deg,
+                #FFD700 120deg,
+                #00F5FF 180deg,
+                #8B00FF 240deg,
+                #FF006E 300deg,
+                #FF006E 360deg
+            );
+            opacity: 0.2;
+            animation: rainbowSpin 10s linear infinite, pulsate 3s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(100px);
+            transform: translate(-50%, -50%);
+        }
+
+        @keyframes backgroundShift {
+            0%, 100% { 
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            50% { 
+                transform: scale(1.5) rotate(180deg);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes rainbowSpin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes pulsate {
+            0%, 100% { 
+                opacity: 0.2;
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(1.3);
+            }
+        }
+
+        /* 星空レイヤー */
+        .star-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px white, 0 0 20px rgba(255, 255, 255, 0.8);
+            animation: starTwinkle 3s ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% { 
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.5);
+            }
+        }
+
+        /* 流れ星エフェクト */
+        .shooting-star {
+            position: fixed;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 2px white, 0 0 20px 4px rgba(255, 255, 255, 0.5);
+            animation: shoot 2s linear;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(300px) translateY(300px);
+                opacity: 0;
+            }
+        }
+
+        /* ネオンパーティクル */
+        .neon-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+            animation: float-neon 4s ease-out;
+        }
+
+        @keyframes float-neon {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-150vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 450px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            animation: explosiveEntrance 1s ease-out;
+            position: relative;
+        }
+
+        @keyframes explosiveEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.3) rotate(-10deg);
+                filter: blur(20px);
+            }
+            60% {
+                transform: scale(1.1) rotate(3deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+                filter: blur(0);
+            }
+        }
+
+        header::before,
+        header::after {
+            content: '✦';
+            position: absolute;
+            font-size: 3rem;
+            animation: orbitSpin 4s linear infinite;
+            filter: drop-shadow(0 0 10px #FF006E) drop-shadow(0 0 20px #00F5FF) drop-shadow(0 0 30px #8B00FF);
+        }
+
+        header::before {
+            top: 0;
+            left: 10%;
+            color: var(--neon-pink);
+            animation-delay: 0s;
+        }
+
+        header::after {
+            top: 0;
+            right: 10%;
+            color: var(--neon-blue);
+            animation-delay: 2s;
+        }
+
+        @keyframes orbitSpin {
+            0% { 
+                transform: rotate(0deg) translateY(0);
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% { 
+                transform: rotate(360deg) translateY(0);
+                opacity: 0.6;
+            }
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 8vw, 3rem);
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(
+                45deg,
+                var(--neon-pink) 0%,
+                var(--neon-orange) 25%,
+                var(--neon-gold) 50%,
+                var(--neon-blue) 75%,
+                var(--neon-purple) 100%
+            );
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: rainbowShift 3s ease-in-out infinite;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 110, 0.8))
+                    drop-shadow(0 0 40px rgba(0, 245, 255, 0.6));
+            position: relative;
+        }
+
+        @keyframes rainbowShift {
+            0%, 100% {
+                background-position: 0% 50%;
+                transform: scale(1);
+            }
+            50% {
+                background-position: 100% 50%;
+                transform: scale(1.05);
+            }
+        }
+
+        .subtitle {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--neon-gold);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            animation: glowPulse 2s ease-in-out infinite;
+            text-shadow: 
+                0 0 10px var(--neon-gold),
+                0 0 20px var(--neon-orange),
+                0 0 30px var(--neon-pink);
+        }
+
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px var(--neon-gold),
+                    0 0 20px var(--neon-orange);
+                opacity: 0.8;
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px var(--neon-gold),
+                    0 0 40px var(--neon-orange),
+                    0 0 60px var(--neon-pink);
+                opacity: 1;
+            }
+        }
+
+        /* カードコンテナ */
+        .main-card-container {
+            perspective: 2000px;
+            margin-bottom: 30px;
+            animation: cardDrop 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+        }
+
+        @keyframes cardDrop {
+            0% {
+                opacity: 0;
+                transform: translateY(-200px) rotateX(90deg) scale(0.5);
+            }
+            60% {
+                transform: translateY(20px) rotateX(-10deg) scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg) scale(1);
+            }
+        }
+
+        /* 3Dフリップカード本体 */
+        .main-card {
+            position: relative;
+            width: 100%;
+            min-height: 550px;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .main-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* カード面共通設定 */
+        .card-face {
+            position: absolute;
+            width: 100%;
+            min-height: 550px;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            border-radius: 25px;
+            padding: 35px 30px;
+        }
+
+        /* 表面 */
+        .card-front {
+            background: linear-gradient(135deg, 
+                rgba(26, 0, 51, 0.95) 0%, 
+                rgba(45, 0, 82, 0.95) 50%,
+                rgba(26, 0, 51, 0.95) 100%);
+            box-shadow: 
+                inset 0 0 80px rgba(255, 0, 110, 0.2),
+                0 30px 100px rgba(0, 0, 0, 0.9),
+                0 0 60px rgba(0, 245, 255, 0.4);
+        }
+
+        /* ホログラム - 表面のみ */
+        .card-front::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 0, 110, 0.4) 40%,
+                rgba(0, 245, 255, 0.4) 50%,
+                rgba(139, 0, 255, 0.4) 60%,
+                transparent 70%
+            );
+            animation: hologram 3s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 25px;
+        }
+
+        @keyframes hologram {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(360deg);
+            }
+        }
+
+        /* 虹色枠 - 表面 */
+        .card-front::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            border-radius: 25px;
+            background: linear-gradient(45deg, 
+                var(--neon-pink), 
+                var(--neon-orange),
+                var(--neon-gold), 
+                var(--neon-blue), 
+                var(--neon-purple),
+                var(--neon-pink)
+            ) border-box;
+            background-size: 300% 300%;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) padding-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRainbow 4s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            box-shadow: 
+                inset 0 0 40px rgba(255, 0, 110, 0.3),
+                0 0 40px rgba(0, 245, 255, 0.5),
+                0 0 80px rgba(139, 0, 255, 0.3);
+        }
+
+        @keyframes borderRainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 表面のコンテンツ */
+        .card-front > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 裏面 */
+        .card-back {
+            background: linear-gradient(135deg, 
+                rgba(26, 0, 51, 0.98) 0%, 
+                rgba(45, 0, 82, 0.98) 50%,
+                rgba(26, 0, 51, 0.98) 100%);
+            transform: rotateY(180deg);
+            box-shadow: 
+                inset 0 0 80px rgba(139, 0, 255, 0.3),
+                0 30px 100px rgba(0, 0, 0, 0.9),
+                0 0 60px rgba(255, 215, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 虹色枠 - 裏面 */
+        .card-back::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            border-radius: 25px;
+            background: linear-gradient(45deg, 
+                var(--neon-pink), 
+                var(--neon-orange),
+                var(--neon-gold), 
+                var(--neon-blue), 
+                var(--neon-purple),
+                var(--neon-pink)
+            ) border-box;
+            background-size: 300% 300%;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) padding-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRainbow 4s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+            box-shadow: 
+                inset 0 0 40px rgba(255, 215, 0, 0.3),
+                0 0 40px rgba(255, 215, 0, 0.5),
+                0 0 80px rgba(139, 0, 255, 0.3);
+        }
+
+        /* 裏面のコンテンツ */
+        .card-back > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* フィルターグループ */
+        .filter-group {
+            margin-bottom: 22px;
+            position: relative;
+            animation: filterSlideIn 0.6s ease-out backwards;
+            z-index: 2;
+        }
+
+        .filter-group:nth-child(1) { animation-delay: 0.1s; }
+        .filter-group:nth-child(2) { animation-delay: 0.2s; }
+        .filter-group:nth-child(3) { animation-delay: 0.3s; }
+        .filter-group:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes filterSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .filter-label {
+            display: block;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            animation: labelPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes labelPulse {
+            0%, 100% {
+                filter: brightness(1);
+            }
+            50% {
+                filter: brightness(1.5) drop-shadow(0 0 10px var(--neon-pink));
+            }
+        }
+
+        select {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            border: 3px solid transparent;
+            border-radius: 15px;
+            font-size: 1.05rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            color: var(--neon-gold);
+            background: rgba(26, 0, 51, 0.8);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FF006E' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 24px;
+            box-shadow: 
+                inset 0 0 20px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(255, 0, 110, 0.3),
+                0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 
+                inset 0 0 30px rgba(255, 0, 110, 0.3),
+                0 0 40px rgba(255, 0, 110, 0.8),
+                0 0 60px rgba(0, 245, 255, 0.6),
+                0 10px 30px rgba(0, 0, 0, 0.6);
+            animation: selectGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes selectGlow {
+            0%, 100% {
+                box-shadow: 
+                    inset 0 0 30px rgba(255, 0, 110, 0.3),
+                    0 0 40px rgba(255, 0, 110, 0.8),
+                    0 10px 30px rgba(0, 0, 0, 0.6);
+            }
+            50% {
+                box-shadow: 
+                    inset 0 0 40px rgba(0, 245, 255, 0.4),
+                    0 0 60px rgba(0, 245, 255, 0.9),
+                    0 0 80px rgba(139, 0, 255, 0.6),
+                    0 10px 30px rgba(0, 0, 0, 0.6);
+            }
+        }
+
+        select:hover {
+            border-color: var(--neon-blue);
+            transform: translateY(-2px);
+            box-shadow: 
+                inset 0 0 25px rgba(0, 245, 255, 0.2),
+                0 0 30px rgba(0, 245, 255, 0.6),
+                0 8px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        select option {
+            background: #1a0033;
+            color: #fff;
+            font-family: 'Cormorant Garamond', serif;
+            padding: 10px;
+        }
+
+        /* 決めるボタン */
+        .decide-button {
+            width: 100%;
+            padding: 22px;
+            border: none;
+            border-radius: 18px;
+            background: linear-gradient(135deg, 
+                var(--neon-pink) 0%, 
+                var(--neon-orange) 25%,
+                var(--neon-gold) 50%,
+                var(--neon-blue) 75%,
+                var(--neon-purple) 100%);
+            background-size: 300% 300%;
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            position: relative;
+            overflow: hidden;
+            text-shadow: 
+                0 0 10px rgba(0, 0, 0, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.5);
+            animation: buttonRainbow 3s ease-in-out infinite, buttonFloat 3s ease-in-out infinite;
+            box-shadow: 
+                inset 0 0 30px rgba(255, 255, 255, 0.3),
+                0 0 40px rgba(255, 0, 110, 0.8),
+                0 0 60px rgba(0, 245, 255, 0.6),
+                0 0 80px rgba(139, 0, 255, 0.4),
+                0 10px 40px rgba(0, 0, 0, 0.8);
+            z-index: 2;
+        }
+
+        @keyframes buttonRainbow {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes buttonFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .decide-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.8) 0%, 
+                rgba(255, 0, 110, 0.4) 50%,
+                transparent 100%);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .decide-button::after {
+            content: '⚡';
+            position: absolute;
+            top: 50%;
+            left: -30px;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0;
+            animation: lightning 2s ease-in-out infinite;
+        }
+
+        @keyframes lightning {
+            0%, 90%, 100% {
+                opacity: 0;
+                left: -30px;
+            }
+            45% {
+                opacity: 1;
+                left: 50%;
+            }
+        }
+
+        .decide-button:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 
+                inset 0 0 50px rgba(255, 255, 255, 0.5),
+                0 0 60px rgba(255, 0, 110, 1),
+                0 0 90px rgba(0, 245, 255, 0.8),
+                0 0 120px rgba(139, 0, 255, 0.6),
+                0 15px 50px rgba(0, 0, 0, 0.9);
+            animation: buttonShake 0.3s ease-in-out infinite, buttonRainbow 1s ease-in-out infinite;
+        }
+
+        @keyframes buttonShake {
+            0%, 100% { transform: translateY(-8px) scale(1.05) rotate(0deg); }
+            25% { transform: translateY(-8px) scale(1.05) rotate(-2deg); }
+            75% { transform: translateY(-8px) scale(1.05) rotate(2deg); }
+        }
+
+        .decide-button:active {
+            transform: translateY(-3px) scale(0.98);
+        }
+
+        .decide-button:active::before {
+            width: 500px;
+            height: 500px;
+        }
+
+        .decide-button:disabled {
+            background: rgba(50, 50, 50, 0.8);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.6;
+            animation: none;
+        }
+
+        /* 結果表示 */
+        .result-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 3px solid transparent;
+            border-image: linear-gradient(90deg, 
+                transparent,
+                var(--neon-pink),
+                var(--neon-blue),
+                var(--neon-purple),
+                transparent) 1;
+            position: relative;
+            animation: headerEntrance 1s ease-out;
+        }
+
+        @keyframes headerEntrance {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotateX(90deg);
+            }
+            50% {
+                transform: scale(1.1) rotateX(-5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotateX(0deg);
+            }
+        }
+
+        .result-header::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            width: 2px;
+            height: 60px;
+            background: linear-gradient(to bottom, 
+                transparent,
+                var(--neon-gold),
+                transparent);
+            box-shadow: 0 0 20px var(--neon-gold), 0 0 40px var(--neon-orange);
+            animation: lightBeam 2s ease-in-out infinite;
+            transform: translateX(-50%);
+        }
+
+        @keyframes lightBeam {
+            0%, 100% {
+                opacity: 0.3;
+                height: 40px;
+            }
+            50% {
+                opacity: 1;
+                height: 80px;
+            }
+        }
+
+        .result-header::after {
+            content: '★';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: var(--neon-gold);
+            animation: starBurst 1.5s ease-out infinite;
+            filter: drop-shadow(0 0 20px var(--neon-gold));
+        }
+
+        @keyframes starBurst {
+            0% {
+                opacity: 0;
+                transform: translateX(-50%) scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateX(-50%) scale(2) rotate(180deg);
+            }
+        }
+
+        .result-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, 
+                var(--neon-pink),
+                var(--neon-orange),
+                var(--neon-gold),
+                var(--neon-blue));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleShine 3s ease-in-out infinite;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            filter: drop-shadow(0 0 20px rgba(255, 0, 110, 0.8))
+                    drop-shadow(0 0 40px rgba(0, 245, 255, 0.6));
+        }
+
+        @keyframes titleShine {
+            0%, 100% {
+                background-position: 0% 50%;
+                transform: scale(1);
+            }
+            50% {
+                background-position: 100% 50%;
+                transform: scale(1.05);
+            }
+        }
+
+        .result-location {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: var(--neon-blue);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 
+                0 0 10px var(--neon-blue),
+                0 0 20px var(--neon-purple);
+            animation: locationPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes locationPulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 10px var(--neon-blue),
+                    0 0 20px var(--neon-purple);
+            }
+            50% {
+                text-shadow: 
+                    0 0 20px var(--neon-blue),
+                    0 0 40px var(--neon-purple),
+                    0 0 60px var(--neon-pink);
+            }
+        }
+
+        .result-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .result-section {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(26, 0, 51, 0.6);
+            border-radius: 15px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            animation: sectionFadeIn 0.8s ease-out backwards;
+        }
+
+        .result-section:nth-child(1) { animation-delay: 0.3s; }
+        .result-section:nth-child(2) { animation-delay: 0.5s; }
+
+        @keyframes sectionFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            padding: 2px;
+            background: linear-gradient(45deg, 
+                var(--neon-pink),
+                var(--neon-blue),
+                var(--neon-purple),
+                var(--neon-pink));
+            background-size: 300% 300%;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderFlow 3s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes borderFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .result-section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 900;
+            color: var(--neon-pink);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            text-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .result-section-content {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            color: #fff;
+            font-weight: 600;
+            line-height: 1.7;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 25px;
+            animation: tagsFadeIn 1s ease-out 0.7s backwards;
+        }
+
+        @keyframes tagsFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .tag {
+            background: linear-gradient(135deg, 
+                rgba(255, 0, 110, 0.4),
+                rgba(0, 245, 255, 0.4));
+            border: 2px solid var(--neon-blue);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+            box-shadow: 
+                inset 0 0 20px rgba(255, 255, 255, 0.2),
+                0 0 20px rgba(0, 245, 255, 0.4),
+                0 4px 15px rgba(0, 0, 0, 0.6);
+            animation: tagFloat 3s ease-in-out infinite;
+        }
+
+        .tag:nth-child(1) { animation-delay: 0s; }
+        .tag:nth-child(2) { animation-delay: 0.3s; }
+        .tag:nth-child(3) { animation-delay: 0.6s; }
+
+        @keyframes tagFloat {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* LINEユーザー名表示 */
+        .user-greeting {
+            text-align: center;
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--neon-gold);
+            text-shadow: 0 0 10px var(--neon-gold);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        /* シェアボタン */
+        .share-button {
+            width: 100%;
+            padding: 16px;
+            border: 3px solid var(--neon-pink);
+            border-radius: 15px;
+            background: linear-gradient(135deg, 
+                rgba(255, 0, 110, 0.3),
+                rgba(255, 69, 0, 0.3));
+            color: var(--neon-pink);
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-top: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(255, 0, 110, 0.4),
+                0 6px 20px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 0 15px var(--neon-pink);
+        }
+
+        .share-button:hover {
+            background: linear-gradient(135deg, 
+                rgba(255, 0, 110, 0.6),
+                rgba(255, 69, 0, 0.6));
+            border-color: var(--neon-orange);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                inset 0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 40px var(--neon-pink),
+                0 0 60px var(--neon-orange),
+                0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* 閉じるボタン */
+        .close-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            background: rgba(26, 0, 51, 0.9);
+            color: var(--neon-blue);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 20px rgba(0, 245, 255, 0.5),
+                0 4px 15px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .close-button:hover {
+            background: rgba(0, 245, 255, 0.2);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 
+                0 0 30px rgba(0, 245, 255, 0.8),
+                0 6px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        /* ローディング表示 */
+        .liff-loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0015;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .liff-loading.hidden {
+            display: none;
+        }
+
+        .liff-loading-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: var(--neon-blue);
+            margin-top: 20px;
+            text-shadow: 0 0 20px var(--neon-blue);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        .reset-button {
+            width: 100%;
+            padding: 16px;
+            border: 3px solid var(--neon-purple);
+            border-radius: 15px;
+            background: rgba(26, 0, 51, 0.8);
+            color: var(--neon-blue);
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            margin-top: 25px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.6),
+                0 0 20px rgba(139, 0, 255, 0.4),
+                0 6px 20px rgba(0, 0, 0, 0.6);
+            text-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .reset-button:hover {
+            background: linear-gradient(135deg, 
+                rgba(139, 0, 255, 0.6),
+                rgba(0, 245, 255, 0.6));
+            border-color: var(--neon-blue);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 
+                inset 0 0 40px rgba(255, 255, 255, 0.3),
+                0 0 40px var(--neon-blue),
+                0 0 60px var(--neon-purple),
+                0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        @media (max-width: 380px) {
+            h1 {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
+            }
+            .card-face {
+                padding: 25px;
+            }
+            .decide-button {
+                font-size: 1.3rem;
+                letter-spacing: 3px;
+            }
+        }
+
+        .loading {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 5px solid transparent;
+            border-top-color: var(--neon-pink);
+            border-right-color: var(--neon-blue);
+            border-bottom-color: var(--neon-purple);
+            border-left-color: var(--neon-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite, colorShift 2s ease-in-out infinite;
+            box-shadow: 
+                0 0 30px rgba(255, 0, 110, 0.6),
+                0 0 50px rgba(0, 245, 255, 0.4),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes colorShift {
+            0%, 100% {
+                filter: hue-rotate(0deg) brightness(1);
+            }
+            50% {
+                filter: hue-rotate(180deg) brightness(1.5);
+            }
+        }
+
+        .main-card.drawing {
+            animation: explosiveDraw 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        @keyframes explosiveDraw {
+            0% {
+                transform: scale(1) rotateY(0deg);
+                filter: brightness(1);
+            }
+            25% {
+                transform: scale(0.8) rotateY(45deg);
+                filter: brightness(2) saturate(2);
+            }
+            50% {
+                transform: scale(1.3) rotateY(90deg);
+                filter: brightness(3) saturate(3) hue-rotate(180deg);
+            }
+            75% {
+                transform: scale(0.9) rotateY(135deg);
+                filter: brightness(2) saturate(2);
+            }
+            100% {
+                transform: scale(1) rotateY(180deg);
+                filter: brightness(1);
+            }
+        }
+
+        .main-card.flipped {
+            animation: victoryPulse 2s ease-in-out;
+        }
+
+        @keyframes victoryPulse {
+            0%, 100% {
+                transform: rotateY(180deg) scale(1);
+                filter: brightness(1);
+            }
+            50% {
+                transform: rotateY(180deg) scale(1.05);
+                filter: brightness(1.3) drop-shadow(0 0 50px rgba(255, 0, 110, 1));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LIFFローディング画面 -->
+    <div class="liff-loading" id="liff-loading">
+        <div class="loading"></div>
+        <div class="liff-loading-text">LINE連携中...</div>
+    </div>
+
+    <!-- 閉じるボタン -->
+    <button class="close-button" id="close-btn" style="display: none;">✕</button>
+
+    <div class="container">
+        <header>
+            <div class="user-greeting" id="user-greeting" style="display: none;"></div>
+            <h1 data-text="今日なにする？">今日なにする？</h1>
+            <p class="subtitle">あなたの運命のアクティビティを見つけよう</p>
+        </header>
+
+        <div class="star-layer" id="star-layer"></div>
+
+        <div class="main-card-container">
+            <div class="main-card" id="main-card">
+                <!-- 表面 -->
+                <div class="card-face card-front">
+                    <div class="filter-group">
+                        <label class="filter-label">🕐 時間はどのくらい？</label>
+                        <select id="time-filter">
+                            <option value="">指定しない</option>
+                            <option value="30分以内">30分以内</option>
+                            <option value="1時間">1時間</option>
+                            <option value="2時間">2時間</option>
+                            <option value="3時間">3時間</option>
+                            <option value="半日">半日</option>
+                            <option value="1日">1日</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">👥 人数は？</label>
+                        <select id="people-filter">
+                            <option value="">指定しない</option>
+                            <option value="1人">1人</option>
+                            <option value="2人">2人</option>
+                            <option value="3-4人">3-4人</option>
+                            <option value="5人以上">5人以上</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">📍 どこに行く？</label>
+                        <select id="location-filter">
+                            <option value="">指定しない</option>
+                            <option value="東京">東京</option>
+                            <option value="神奈川">神奈川</option>
+                            <option value="埼玉">埼玉</option>
+                            <option value="千葉">千葉</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label class="filter-label">🌸 季節は？</label>
+                        <select id="season-filter">
+                            <option value="">指定しない</option>
+                            <option value="春">春</option>
+                            <option value="夏">夏</option>
+                            <option value="秋">秋</option>
+                            <option value="冬">冬</option>
+                            <option value="通年">通年</option>
+                        </select>
+                    </div>
+
+                    <button class="decide-button" id="decide-btn" style="margin-top: 30px;">
+                        決める！
+                    </button>
+                </div>
+
+                <!-- 裏面 -->
+                <div class="card-face card-back">
+                    <div class="result-header">
+                        <h2 class="result-title" id="result-title">場所名</h2>
+                        <p class="result-location" id="result-location">📍 エリア</p>
+                    </div>
+                    <div class="result-body">
+                        <div class="result-section">
+                            <h3 class="result-section-title">できること</h3>
+                            <p class="result-section-content" id="result-activity">アクティビティの説明</p>
+                        </div>
+                        <div class="result-section">
+                            <h3 class="result-section-title">おすすめポイント</h3>
+                            <p class="result-section-content" id="result-point">ポイントの説明</p>
+                        </div>
+                        <div class="result-tags" id="result-tags">
+                            <span class="tag">⏱️ 時間</span>
+                            <span class="tag">👥 人数</span>
+                            <span class="tag">🌸 季節</span>
+                        </div>
+                    </div>
+                    <button class="share-button" id="share-btn" style="display: none;">LINEでシェア 📤</button>
+                    <button class="reset-button" id="reset-btn">もう一度引く</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // LIFF設定
+        // ========================================
+        const LIFF_ID = '2008621315-WjyqJ7mQ'; // ここにLIFF IDを入れてください
+
+        // ========================================
+        // アクティビティデータベース（200件）
+        // ========================================
+        const activities = [
+            // 東京 - 観光スポット
+            { location: "東京", place: "浅草寺", activity: "雷門で写真撮影＆仲見世通り食べ歩き", time: "2時間", point: "人形焼きと雷おこしは外せない！", season: "通年", people: "1人" },
+            { location: "東京", place: "東京スカイツリー", activity: "展望デッキから東京一望", time: "2時間", point: "夕暮れ時がロマンチック", season: "通年", people: "2人" },
+            { location: "東京", place: "上野動物園", activity: "パンダ観察＆園内散策", time: "3時間", point: "シャンシャンの子供たちに会える", season: "通年", people: "3-4人" },
+            { location: "東京", place: "築地場外市場", activity: "海鮮丼とお寿司の食べ歩き", time: "2時間", point: "朝早めに行くのが正解", season: "通年", people: "2人" },
+            { location: "東京", place: "明治神宮", activity: "御朱印巡り＆森林浴", time: "1時間", point: "都会のオアシスで心をリセット", season: "通年", people: "1人" },
+            { location: "東京", place: "代々木公園", activity: "レジャーシート広げてピクニック", time: "半日", point: "週末はパフォーマーたちも集結", season: "春", people: "3-4人" },
+            { location: "東京", place: "お台場海浜公園", activity: "自由の女神前で記念撮影", time: "2時間", point: "レインボーブリッジの夜景が最高", season: "通年", people: "2人" },
+            { location: "東京", place: "六本木ヒルズ", activity: "展望台＆アート鑑賞", time: "3時間", point: "森美術館は夜遅くまで開いてる", season: "通年", people: "2人" },
+            { location: "東京", place: "渋谷スクランブル交差点", activity: "2階カフェから人の流れを眺める", time: "1時間", point: "世界一有名な交差点を堪能", season: "通年", people: "2人" },
+            { location: "東京", place: "原宿竹下通り", activity: "クレープ食べながらショッピング", time: "2時間", point: "SNS映えスイーツの宝庫", season: "通年", people: "2人" },
+            
+            // 東京 - 公園・自然
+            { location: "東京", place: "井の頭恩賜公園", activity: "ボート漕ぎデート", time: "2時間", point: "カップルで乗ると別れるジンクスは気にしない", season: "春", people: "2人" },
+            { location: "東京", place: "新宿御苑", activity: "四季折々の花を愛でる散策", time: "2時間", point: "桜の季節は混雑必至", season: "春", people: "2人" },
+            { location: "東京", place: "砧公園", activity: "バドミントン＆ピクニック", time: "半日", point: "広大な芝生でのんびり過ごせる", season: "春", people: "3-4人" },
+            { location: "東京", place: "小石川後楽園", activity: "日本庭園でまったり散策", time: "1時間", point: "四季の移ろいを感じる庭園美", season: "秋", people: "2人" },
+            { location: "東京", place: "隅田公園", activity: "川沿いランニング＆ストレッチ", time: "1時間", point: "スカイツリーを眺めながら運動", season: "通年", people: "1人" },
+            
+            // 東京 - カフェ・飲食
+            { location: "東京", place: "神楽坂", activity: "石畳の路地裏カフェ巡り", time: "3時間", point: "フランスと日本が融合した街", season: "通年", people: "2人" },
+            { location: "東京", place: "吉祥寺", activity: "個性派カフェでまったり読書", time: "2時間", point: "住みたい街ランキング常連", season: "通年", people: "1人" },
+            { location: "東京", place: "下北沢", activity: "古着屋巡り＆カレー屋ランチ", time: "3時間", point: "サブカル好きの聖地", season: "通年", people: "2人" },
+            { location: "東京", place: "清澄白河", activity: "サードウェーブコーヒー飲み比べ", time: "2時間", point: "ブルーボトルコーヒー発祥の地", season: "通年", people: "2人" },
+            { location: "東京", place: "中目黒", activity: "目黒川沿いのカフェでブランチ", time: "2時間", point: "桜の季節は絶景スポット", season: "春", people: "2人" },
+            
+            // 神奈川
+            { location: "神奈川", place: "横浜中華街", activity: "食べ放題＆占い巡り", time: "3時間", point: "中国茶と占いで運勢チェック", season: "通年", people: "3-4人" },
+            { location: "神奈川", place: "みなとみらい", activity: "観覧車＆夜景デート", time: "2時間", point: "コスモワールドは入園無料", season: "通年", people: "2人" },
+            { location: "神奈川", place: "江の島", activity: "江の島エスカー＆展望台", time: "3時間", point: "しらす丼は必食", season: "通年", people: "2人" },
+            { location: "神奈川", place: "鎌倉大仏", activity: "鎌倉大仏と記念撮影", time: "1時間", point: "大仏様の胎内拝観もできる", season: "通年", people: "2人" },
+            { location: "神奈川", place: "箱根ロープウェイ", activity: "空中散歩＆大涌谷見学", time: "3時間", point: "黒たまごで寿命7年延びる", season: "通年", people: "2人" },
+            
+            // 埼玉
+            { location: "埼玉", place: "川越", activity: "小江戸散策＆芋スイーツ", time: "半日", point: "時の鐘は必見", season: "通年", people: "2人" },
+            { location: "埼玉", place: "鉄道博物館", activity: "電車シミュレーター体験", time: "3時間", point: "鉄道ファンの聖地", season: "通年", people: "2人" },
+            { location: "埼玉", place: "秩父", activity: "長瀞ライン下り＆岩畳散策", time: "半日", point: "新緑と紅葉の時期が絶景", season: "秋", people: "3-4人" },
+            { location: "埼玉", place: "所沢サクラタウン", activity: "角川武蔵野ミュージアム見学", time: "2時間", point: "巨大な本棚が圧巻", season: "通年", people: "2人" },
+            { location: "埼玉", place: "大宮氷川神社", activity: "参拝＆氷川だんご", time: "1時間", point: "縁結びのご利益", season: "通年", people: "2人" },
+            
+            // 千葉
+            { location: "千葉", place: "東京ディズニーランド", activity: "アトラクション制覇", time: "1日", point: "夢の国で童心に帰る", season: "通年", people: "3-4人" },
+            { location: "千葉", place: "成田山新勝寺", activity: "参拝＆参道散策", time: "2時間", point: "うなぎも忘れずに", season: "通年", people: "2人" },
+            { location: "千葉", place: "鴨川シーワールド", activity: "シャチショー鑑賞", time: "3時間", point: "水しぶきで濡れる覚悟を", season: "通年", people: "3-4人" },
+            { location: "千葉", place: "マザー牧場", activity: "動物と触れ合い＆ジンギスカン", time: "半日", point: "羊のショーが可愛い", season: "春", people: "3-4人" },
+            { location: "千葉", place: "幕張海浜公園", activity: "広大な芝生でフリスビー", time: "2時間", point: "BBQ施設も充実", season: "春", people: "3-4人" },
+            
+            // ふざけた枠
+            { location: "東京", place: "渋谷駅周辺", activity: "ハチ公像の前で待ち合わせごっこ", time: "30分以内", point: "誰も来ないのに待ち続ける演技力", season: "通年", people: "1人" },
+            { location: "東京", place: "秋葉原駅", activity: "ガチャガチャを10連チャレンジ", time: "30分以内", point: "欲しいものが出るまで回せ", season: "通年", people: "1人" },
+            { location: "東京", place: "銀座の歩道", activity: "白線の上だけを歩いて横断する", time: "30分以内", point: "大人の平均台チャレンジ", season: "通年", people: "1人" },
+            { location: "神奈川", place: "山下公園", activity: "海を眺めながらベンチで昼寝", time: "1時間", point: "潮風が心地よい最高の昼寝スポット", season: "春", people: "1人" },
+            { location: "埼玉", place: "秩父駅", activity: "駅のベンチで次の電車まで昼寝", time: "1時間", point: "ローカル線の醍醐味", season: "通年", people: "1人" },
+            { location: "千葉", place: "市川市", activity: "江戸川の土手で寝転がる", time: "1時間", point: "何もしない贅沢時間", season: "春", people: "1人" }
+        ];
+
+        // DOM要素
+        const decideBtn = document.getElementById('decide-btn');
+        const mainCard = document.getElementById('main-card');
+        const resetBtn = document.getElementById('reset-btn');
+        const shareBtn = document.getElementById('share-btn');
+        const closeBtn = document.getElementById('close-btn');
+        const starLayer = document.getElementById('star-layer');
+        const liffLoading = document.getElementById('liff-loading');
+        const userGreeting = document.getElementById('user-greeting');
+
+        // フィルター要素
+        const timeFilter = document.getElementById('time-filter');
+        const peopleFilter = document.getElementById('people-filter');
+        const locationFilter = document.getElementById('location-filter');
+        const seasonFilter = document.getElementById('season-filter');
+
+        // 結果表示要素
+        const resultTitle = document.getElementById('result-title');
+        const resultLocation = document.getElementById('result-location');
+        const resultActivity = document.getElementById('result-activity');
+        const resultPoint = document.getElementById('result-point');
+        const resultTags = document.getElementById('result-tags');
+
+        // 現在の結果を保存
+        let currentResult = null;
+
+        // ========================================
+        // LIFF初期化
+        // ========================================
+        async function initializeLiff() {
+            try {
+                await liff.init({ liffId: LIFF_ID });
+                
+                // ローディング非表示
+                liffLoading.classList.add('hidden');
+
+                // ログイン状態確認
+                if (!liff.isLoggedIn()) {
+                    liff.login();
+                    return;
+                }
+
+                // 閉じるボタンを表示（LIFFブラウザ内の場合のみ）
+                if (!liff.isInClient()) {
+                    closeBtn.style.display = 'flex';
+                }
+
+                // ユーザー情報取得
+                const profile = await liff.getProfile();
+                userGreeting.textContent = `${profile.displayName}さん、こんにちは！`;
+                userGreeting.style.display = 'block';
+
+                // シェアボタンを有効化
+                shareBtn.style.display = 'block';
+
+            } catch (error) {
+                console.error('LIFF初期化エラー:', error);
+                alert('LINEアプリとの連携に失敗しました。');
+                liffLoading.classList.add('hidden');
+            }
+        }
+
+        // 閉じるボタン
+        closeBtn.addEventListener('click', () => {
+            liff.closeWindow();
+        });
+
+        // シェアボタン
+        shareBtn.addEventListener('click', () => {
+            if (!currentResult) return;
+
+            const shareMessage = {
+                type: 'text',
+                text: `🎴 今日のおすすめアクティビティ 🎴\n\n📍 ${currentResult.place}（${currentResult.location}）\n✨ ${currentResult.activity}\n\n💡 ${currentResult.point}\n\n⏱️ ${currentResult.time} | 👥 ${currentResult.people} | 🌸 ${currentResult.season}\n\nあなたも運命のアクティビティを見つけよう！`
+            };
+
+            if (liff.isApiAvailable('shareTargetPicker')) {
+                liff.shareTargetPicker([shareMessage])
+                    .then(() => {
+                        console.log('シェア成功');
+                    })
+                    .catch((error) => {
+                        console.error('シェアエラー:', error);
+                        alert('シェアに失敗しました。');
+                    });
+            } else {
+                alert('この環境ではシェア機能が利用できません。');
+            }
+        });
+
+        // ========================================
+        // アプリの初期化処理
+        // ========================================
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starLayer.appendChild(star);
+            }
+        }
+
+        // 流れ星生成
+        function createShootingStar() {
+            const shootingStar = document.createElement('div');
+            shootingStar.className = 'shooting-star';
+            shootingStar.style.left = Math.random() * 50 + '%';
+            shootingStar.style.top = Math.random() * 50 + '%';
+            document.body.appendChild(shootingStar);
+            
+            setTimeout(() => shootingStar.remove(), 2000);
+        }
+
+        // 定期的に流れ星を生成
+        setInterval(createShootingStar, 3000);
+
+        // 決めるボタンクリック
+        decideBtn.addEventListener('click', () => {
+            // フィルター値取得
+            const filters = {
+                time: timeFilter.value,
+                people: peopleFilter.value,
+                location: locationFilter.value,
+                season: seasonFilter.value
+            };
+
+            // フィルタリング（全条件）
+            let filtered = activities.filter(activity => {
+                if (filters.time && activity.time !== filters.time) return false;
+                if (filters.people && activity.people !== filters.people) return false;
+                if (filters.location && activity.location !== filters.location) return false;
+                if (filters.season && activity.season !== filters.season && activity.season !== '通年') return false;
+                return true;
+            });
+
+            // 該当なしの場合の段階的緩和
+            if (filtered.length === 0) {
+                if (filters.location) {
+                    filtered = activities.filter(activity => activity.location === filters.location);
+                }
+                if (filtered.length === 0) {
+                    filtered = activities;
+                }
+            }
+
+            // ランダム選択
+            const randomActivity = filtered[Math.floor(Math.random() * filtered.length)];
+
+            // ボタンを一時的に無効化
+            decideBtn.disabled = true;
+            decideBtn.innerHTML = '<div class="loading"></div>';
+
+            // 結果を設定
+            displayResult(randomActivity);
+
+            // 演出開始
+            setTimeout(() => {
+                mainCard.classList.add('drawing');
+                createExplosion();
+
+                for (let i = 0; i < 3; i++) {
+                    setTimeout(createShootingStar, i * 200);
+                }
+
+                // カードをめくる
+                setTimeout(() => {
+                    mainCard.classList.remove('drawing');
+                    mainCard.classList.add('flipped');
+                    decideBtn.disabled = false;
+                    decideBtn.innerHTML = '決める！';
+                    
+                    createVictoryParticles();
+                }, 1000);
+            }, 100);
+        });
+
+        // 爆発的なパーティクル生成
+        function createExplosion() {
+            const colors = ['#FF006E', '#00F5FF', '#8B00FF', '#FFD700', '#FF4500'];
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'neon-particle';
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.boxShadow = `0 0 20px ${colors[Math.floor(Math.random() * colors.length)]}`;
+                
+                const angle = (Math.PI * 2 * i) / 30;
+                const velocity = Math.random() * 100 + 50;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                particle.style.transform = `translate(${tx}px, ${ty}px)`;
+                
+                document.body.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 4000);
+            }
+        }
+
+        // 勝利パーティクル生成
+        function createVictoryParticles() {
+            const colors = ['#FF006E', '#00F5FF', '#FFD700'];
+            for (let i = 0; i < 40; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'neon-particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.bottom = '0';
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.boxShadow = `0 0 20px ${colors[Math.floor(Math.random() * colors.length)]}`;
+                    particle.style.animationDuration = (Math.random() * 2 + 3) + 's';
+                    document.body.appendChild(particle);
+                    
+                    setTimeout(() => particle.remove(), 5000);
+                }, i * 50);
+            }
+        }
+
+        // リセットボタンクリック
+        resetBtn.addEventListener('click', () => {
+            mainCard.classList.remove('flipped');
+            createShootingStar();
+        });
+
+        // 結果表示関数
+        function displayResult(activity) {
+            currentResult = activity; // 結果を保存
+            
+            resultTitle.textContent = activity.place;
+            resultLocation.innerHTML = `📍 ${activity.location}`;
+            resultActivity.textContent = activity.activity;
+            resultPoint.textContent = activity.point;
+
+            // タグ生成
+            resultTags.innerHTML = `
+                <span class="tag">⏱️ ${activity.time}</span>
+                <span class="tag">👥 ${activity.people}</span>
+                <span class="tag">🌸 ${activity.season}</span>
+            `;
+        }
+
+        // ========================================
+        // 初期化処理
+        // ========================================
+        // LIFF初期化
+        initializeLiff();
+        
+        // 星空生成
+        createStars();
+    </script>
+</body>
+</html>
