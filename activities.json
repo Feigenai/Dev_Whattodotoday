@@ -1,0 +1,47 @@
+[
+  {
+    "location": "東京",
+    "place": "皇居東御苑",
+    "activity": "江戸城の歴史を感じながら散策",
+    "time": "2時間",
+    "point": "無料で入れる日本庭園の美しさ",
+    "season": "通年",
+    "people": "1人"
+  },
+  {
+    "location": "東京",
+    "place": "代々木公園",
+    "activity": "ピクニック",
+    "time": "半日",
+    "point": "都会のオアシスで自然を満喫",
+    "season": "春",
+    "people": "2人"
+  },
+  {
+    "location": "神奈川",
+    "place": "鎌倉",
+    "activity": "寺社巡り",
+    "time": "1日",
+    "point": "歴史と自然が融合した古都",
+    "season": "通年",
+    "people": "2人"
+  },
+  {
+    "location": "東京",
+    "place": "浅草",
+    "activity": "雷門から仲見世通りを散策",
+    "time": "2時間",
+    "point": "下町の風情と伝統工芸品",
+    "season": "通年",
+    "people": "2人"
+  },
+  {
+    "location": "神奈川",
+    "place": "江ノ島",
+    "activity": "海を見ながらカフェでのんびり",
+    "time": "半日",
+    "point": "湘南の海風を感じる癒しスポット",
+    "season": "夏",
+    "people": "2人"
+  }
+]
