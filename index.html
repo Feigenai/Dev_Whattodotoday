@@ -819,26 +819,54 @@
                 season: seasonFilter.value
             };
 
-            // フィルタリング
+            console.log('🔍 検索条件:', filters);
+            console.log('📊 総データ数:', activities.length);
+
+            // ステップ1: すべての条件で完全一致
             let filtered = activities.filter(activity => {
                 return (!filters.time || activity.time === filters.time) &&
                        (!filters.people || activity.people === filters.people) &&
                        (!filters.location || activity.location === filters.location) &&
                        (!filters.season || activity.season === filters.season);
             });
+            console.log('✅ ステップ1 (全条件一致):', filtered.length, '件');
 
-            if (filtered.length === 0) {
-                filtered = activities.filter(activity => 
-                    !filters.location || activity.location === filters.location
-                );
+            // ステップ2: 場所 + 人数 + 季節（時間を除外）
+            if (filtered.length === 0 && filters.time) {
+                filtered = activities.filter(activity => {
+                    return (!filters.people || activity.people === filters.people) &&
+                           (!filters.location || activity.location === filters.location) &&
+                           (!filters.season || activity.season === filters.season);
+                });
+                console.log('⏱️ ステップ2 (時間を除外):', filtered.length, '件');
             }
 
+            // ステップ3: 場所 + 人数（季節を除外）
+            if (filtered.length === 0 && filters.season) {
+                filtered = activities.filter(activity => {
+                    return (!filters.people || activity.people === filters.people) &&
+                           (!filters.location || activity.location === filters.location);
+                });
+                console.log('🌸 ステップ3 (季節を除外):', filtered.length, '件');
+            }
+
+            // ステップ4: 場所のみ
+            if (filtered.length === 0 && filters.location) {
+                filtered = activities.filter(activity => 
+                    activity.location === filters.location
+                );
+                console.log('📍 ステップ4 (場所のみ):', filtered.length, '件');
+            }
+
+            // ステップ5: すべてから選択
             if (filtered.length === 0) {
                 filtered = activities;
+                console.log('🎲 ステップ5 (全データ):', filtered.length, '件');
             }
 
             // ランダム選択
             const selected = filtered[Math.floor(Math.random() * filtered.length)];
+            console.log('🎯 選択結果:', selected.place, `(${selected.location})`);
             displayResult(selected);
 
             // カードフリップ
