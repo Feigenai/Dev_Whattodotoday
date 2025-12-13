@@ -35,9 +35,10 @@
             bottom: 0;
             max-width: 480px;
             margin: 0 auto;
-            padding: 24px 20px;
+            padding: 20px 20px 20px 20px;
             display: flex;
             flex-direction: column;
+            justify-content: flex-start;
             overflow-y: auto;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
@@ -111,7 +112,7 @@
         /* Header */
         header {
             text-align: center;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }
 
         .user-greeting {
@@ -159,13 +160,13 @@
         /* Card */
         .card-container {
             perspective: 1500px;
-            margin-bottom: 16px;
+            margin-bottom: 0;
         }
 
         .card {
             position: relative;
             width: 100%;
-            min-height: 480px;
+            min-height: 500px;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -177,10 +178,10 @@
         .card-face {
             position: absolute;
             width: 100%;
-            min-height: 480px;
+            min-height: 500px;
             background: #F5F0EB;
             border-radius: 32px;
-            padding: 28px 24px;
+            padding: 28px 24px 36px 24px;
             backface-visibility: hidden;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
@@ -239,6 +240,7 @@
             font-family: 'M PLUS Rounded 1c', sans-serif;
             cursor: pointer;
             margin-top: 8px;
+            margin-bottom: 8px;
             transition: all 0.3s ease;
             box-shadow: 0 6px 24px rgba(240, 146, 126, 0.4);
         }
@@ -373,12 +375,12 @@
             }
             
             .card-face {
-                padding: 24px 20px;
-                min-height: 460px;
+                padding: 24px 20px 32px 20px;
+                min-height: 480px;
             }
 
             .card {
-                min-height: 460px;
+                min-height: 480px;
             }
             
             .result-title {
@@ -402,6 +404,15 @@
             .decide-button {
                 padding: 12px;
                 font-size: 1.125rem;
+                margin-bottom: 8px;
+            }
+
+            .container {
+                padding: 16px 20px 16px 20px;
+            }
+
+            .header {
+                margin-bottom: 10px;
             }
         }
 
