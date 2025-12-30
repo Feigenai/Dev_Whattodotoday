@@ -933,9 +933,16 @@
             window.open(perplexityUrl, '_blank');
         });
 
-        // 季節マッチング関数（通年も含む）
+        // 季節マッチング関数（年始は特別扱い）
         const matchesSeason = (activitySeason, filterSeason) => {
             if (!filterSeason) return true; // 指定なしの場合は全てマッチ
+            
+            // 年始を選択した場合は、年始のみマッチ（通年を含めない）
+            if (filterSeason === '年始') {
+                return activitySeason === '年始';
+            }
+            
+            // その他の季節の場合は、通年も含める
             return activitySeason === filterSeason || activitySeason === '通年';
         };
 
