@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <script>
+        // GitHub PagesでSPAルーティングを実現するためのリダイレクト
+        // すべての404を index.html にリダイレクトし、元のURLを保持
+        sessionStorage.redirect = location.pathname;
+        location.replace('/');
+    </script>
+</head>
+<body>
+</body>
+</html>
