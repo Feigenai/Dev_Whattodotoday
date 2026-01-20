@@ -975,18 +975,25 @@
             
             // URLパスからスポット情報を取得
             const path = window.location.pathname;
-            const match = path.match(/^\/s\/(.+)$/);
+            const match = path.match(/^\/s\/(.*)$/);
             
             if (match) {
-                // /s/浅草 のようなURL
                 const spotName = decodeURIComponent(match[1]);
-                const spot = activities.find(a => a.place === spotName);
                 
-                if (spot) {
-                    // スポットが見つかった場合
-                    currentResult = spot;
-                    displayResult(spot);
-                    updateMetaTags(spot);
+                if (!spotName || spotName === '') {
+                    // /s/ 単独の場合 → ランダムスポット（おまかせ機能）
+                    const randomSpot = activities[Math.floor(Math.random() * activities.length)];
+                    currentResult = randomSpot;
+                    displayResult(randomSpot);
+                    
+                    // おまかせ用のメタタグ
+                    document.title = 'おまかせでおすすめ - 今日なにする？';
+                    document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
+                    document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'おまかせでおすすめ - 今日なにする？');
+                    document.querySelector('meta[property="og:description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット。新しい発見があるかも！`);
+                    document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://seisaily.com/s/');
+                    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://seisaily.com/s/');
+                    
                     mainCard.classList.add('flipped');
                     
                     // 初期カード高さを設定（フリップ後）
@@ -994,9 +1001,25 @@
                         updateCardHeight();
                     }, 100);
                 } else {
-                    // スポットが見つからない場合はトップページへ
-                    history.replaceState(null, null, '/');
-                    updateCardHeight();
+                    // /s/浅草 のようなURL
+                    const spot = activities.find(a => a.place === spotName);
+                    
+                    if (spot) {
+                        // スポットが見つかった場合
+                        currentResult = spot;
+                        displayResult(spot);
+                        updateMetaTags(spot);
+                        mainCard.classList.add('flipped');
+                        
+                        // 初期カード高さを設定（フリップ後）
+                        setTimeout(() => {
+                            updateCardHeight();
+                        }, 100);
+                    } else {
+                        // スポットが見つからない場合はトップページへ
+                        history.replaceState(null, null, '/');
+                        updateCardHeight();
+                    }
                 }
             } else {
                 // 通常のトップページ
@@ -1203,20 +1226,37 @@
         // ブラウザの戻る/進むボタン対応
         window.addEventListener('popstate', async function(event) {
             const path = window.location.pathname;
-            const match = path.match(/^\/s\/(.+)$/);
+            const match = path.match(/^\/s\/(.*)$/);
             
             if (match) {
-                // スポット詳細ページに戻った
                 const spotName = decodeURIComponent(match[1]);
-                const spot = activities.find(a => a.place === spotName);
                 
-                if (spot) {
-                    currentResult = spot;
-                    displayResult(spot);
-                    updateMetaTags(spot);
+                if (!spotName || spotName === '') {
+                    // /s/ 単独の場合 → ランダムスポット（おまかせ機能）
+                    const randomSpot = activities[Math.floor(Math.random() * activities.length)];
+                    currentResult = randomSpot;
+                    displayResult(randomSpot);
+                    
+                    // おまかせ用のメタタグ
+                    document.title = 'おまかせでおすすめ - 今日なにする？';
+                    document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
+                    
                     if (!mainCard.classList.contains('flipped')) {
                         mainCard.classList.add('flipped');
                         setTimeout(updateCardHeight, 50);
+                    }
+                } else {
+                    // スポット詳細ページに戻った
+                    const spot = activities.find(a => a.place === spotName);
+                    
+                    if (spot) {
+                        currentResult = spot;
+                        displayResult(spot);
+                        updateMetaTags(spot);
+                        if (!mainCard.classList.contains('flipped')) {
+                            mainCard.classList.add('flipped');
+                            setTimeout(updateCardHeight, 50);
+                        }
                     }
                 }
             } else {
