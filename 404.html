@@ -856,6 +856,15 @@
         // AdSense広告の初期化
         (adsbygoogle = window.adsbygoogle || []).push({});
 
+        // 404.htmlからのリダイレクト処理
+        (function() {
+            const redirect = sessionStorage.redirect;
+            delete sessionStorage.redirect;
+            if (redirect && redirect !== location.pathname) {
+                history.replaceState(null, null, redirect);
+            }
+        })();
+
         // アクティビティデータベース（非同期読み込み）
         let activities = [];
 
@@ -966,33 +975,34 @@
             
             // URLパスからスポット情報を取得
             const path = window.location.pathname;
-            const match = path.match(/^\/s\/(.*)$/);
             
-            if (match) {
-                const spotName = decodeURIComponent(match[1]);
+            // /s/ 単独の場合を先にチェック
+            if (path === '/s' || path === '/s/') {
+                // おまかせ機能（ランダムスポット）
+                const randomSpot = activities[Math.floor(Math.random() * activities.length)];
+                currentResult = randomSpot;
+                displayResult(randomSpot);
                 
-                if (!spotName || spotName === '') {
-                    // /s/ 単独の場合 → ランダムスポット（おまかせ機能）
-                    const randomSpot = activities[Math.floor(Math.random() * activities.length)];
-                    currentResult = randomSpot;
-                    displayResult(randomSpot);
-                    
-                    // おまかせ用のメタタグ
-                    document.title = 'おまかせでおすすめ - 今日なにする？';
-                    document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
-                    document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'おまかせでおすすめ - 今日なにする？');
-                    document.querySelector('meta[property="og:description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット。新しい発見があるかも！`);
-                    document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://seisaily.com/s/');
-                    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://seisaily.com/s/');
-                    
-                    mainCard.classList.add('flipped');
-                    
-                    // 初期カード高さを設定（フリップ後）
-                    setTimeout(() => {
-                        updateCardHeight();
-                    }, 100);
-                } else {
-                    // /s/浅草 のようなURL
+                // おまかせ用のメタタグ
+                document.title = 'おまかせでおすすめ - 今日なにする？';
+                document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
+                document.querySelector('meta[property="og:title"]')?.setAttribute('content', 'おまかせでおすすめ - 今日なにする？');
+                document.querySelector('meta[property="og:description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット。新しい発見があるかも！`);
+                document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://seisaily.com/s/');
+                document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://seisaily.com/s/');
+                
+                mainCard.classList.add('flipped');
+                
+                // 初期カード高さを設定（フリップ後）
+                setTimeout(() => {
+                    updateCardHeight();
+                }, 100);
+            } else {
+                // /s/浅草 のようなURL
+                const match = path.match(/^\/s\/(.+)$/);
+                
+                if (match) {
+                    const spotName = decodeURIComponent(match[1]);
                     const spot = activities.find(a => a.place === spotName);
                     
                     if (spot) {
@@ -1011,11 +1021,11 @@
                         history.replaceState(null, null, '/');
                         updateCardHeight();
                     }
+                } else {
+                    // 通常のトップページ
+                    // 初期カード高さを設定
+                    updateCardHeight();
                 }
-            } else {
-                // 通常のトップページ
-                // 初期カード高さを設定
-                updateCardHeight();
             }
             
             // ウィンドウリサイズ時も高さを再計算
@@ -1217,27 +1227,28 @@
         // ブラウザの戻る/進むボタン対応
         window.addEventListener('popstate', async function(event) {
             const path = window.location.pathname;
-            const match = path.match(/^\/s\/(.*)$/);
             
-            if (match) {
-                const spotName = decodeURIComponent(match[1]);
+            // /s/ 単独の場合を先にチェック
+            if (path === '/s' || path === '/s/') {
+                // おまかせ機能（ランダムスポット）
+                const randomSpot = activities[Math.floor(Math.random() * activities.length)];
+                currentResult = randomSpot;
+                displayResult(randomSpot);
                 
-                if (!spotName || spotName === '') {
-                    // /s/ 単独の場合 → ランダムスポット（おまかせ機能）
-                    const randomSpot = activities[Math.floor(Math.random() * activities.length)];
-                    currentResult = randomSpot;
-                    displayResult(randomSpot);
-                    
-                    // おまかせ用のメタタグ
-                    document.title = 'おまかせでおすすめ - 今日なにする？';
-                    document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
-                    
-                    if (!mainCard.classList.contains('flipped')) {
-                        mainCard.classList.add('flipped');
-                        setTimeout(updateCardHeight, 50);
-                    }
-                } else {
-                    // スポット詳細ページに戻った
+                // おまかせ用のメタタグ
+                document.title = 'おまかせでおすすめ - 今日なにする？';
+                document.querySelector('meta[name="description"]')?.setAttribute('content', `ランダムに選んだおすすめスポット「${randomSpot.place}」。新しい発見があるかも！`);
+                
+                if (!mainCard.classList.contains('flipped')) {
+                    mainCard.classList.add('flipped');
+                    setTimeout(updateCardHeight, 50);
+                }
+            } else {
+                // /s/浅草 のようなURL
+                const match = path.match(/^\/s\/(.+)$/);
+                
+                if (match) {
+                    const spotName = decodeURIComponent(match[1]);
                     const spot = activities.find(a => a.place === spotName);
                     
                     if (spot) {
@@ -1249,19 +1260,19 @@
                             setTimeout(updateCardHeight, 50);
                         }
                     }
+                } else {
+                    // トップページに戻った
+                    if (mainCard.classList.contains('flipped')) {
+                        mainCard.classList.remove('flipped');
+                        setTimeout(updateCardHeight, 50);
+                    }
+                    
+                    // メタタグをデフォルトに戻す
+                    document.title = '今日なにする？|悩まず予定が決まる！';
+                    document.querySelector('meta[name="description"]')?.setAttribute('content', '今日暇で何するかが決まらないあなたへ。時間・気分・場所を入力するだけで、今できる予定やお出かけプランを即提案する無料サービス。');
+                    document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://seisaily.com/');
+                    document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://seisaily.com/');
                 }
-            } else {
-                // トップページに戻った
-                if (mainCard.classList.contains('flipped')) {
-                    mainCard.classList.remove('flipped');
-                    setTimeout(updateCardHeight, 50);
-                }
-                
-                // メタタグをデフォルトに戻す
-                document.title = '今日なにする？|悩まず予定が決まる！';
-                document.querySelector('meta[name="description"]')?.setAttribute('content', '今日暇で何するかが決まらないあなたへ。時間・気分・場所を入力するだけで、今できる予定やお出かけプランを即提案する無料サービス。');
-                document.querySelector('meta[property="og:url"]')?.setAttribute('content', 'https://seisaily.com/');
-                document.querySelector('link[rel="canonical"]')?.setAttribute('href', 'https://seisaily.com/');
             }
         });
     </script>
