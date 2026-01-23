@@ -1032,24 +1032,52 @@
             window.addEventListener('resize', updateCardHeight);
         }
 
-        // Perplexity検索ボタン
-        aiSearchBtn.addEventListener('click', () => {
-            if (!currentResult) return;
+        // アプリ内かWebかを判定
+const isInApp = /wv|WebView/i.test(navigator.userAgent);
 
-            const searchQuery = `${currentResult.place}（${currentResult.location}）のアクセス方法とおすすめポイント`;
-            const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(searchQuery)}`;
-            
-            // GA4イベント: AI検索クリック
-            if (typeof gtag !== 'undefined') {
-                gtag('event', 'ai_search_click', {
-                    spot_name: currentResult.place,
-                    location: currentResult.location,
-                    search_query: searchQuery
-                });
-            }
-            
-            window.open(perplexityUrl, '_blank');
-        });
+// ボタンのテキストを変更
+if (isInApp) {
+    aiSearchBtn.textContent = 'Google Mapで開く';
+} else {
+    aiSearchBtn.textContent = 'AIで詳しく調べる';
+}
+
+// ボタンクリック時の処理
+aiSearchBtn.addEventListener('click', () => {
+    if (!currentResult) return;
+
+    if (isInApp) {
+        // アプリ内：Google Map で開く
+        const mapQuery = encodeURIComponent(`${currentResult.place} ${currentResult.location}`);
+        const mapUrl = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
+        
+        // GA4イベント: Google Map クリック
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'google_map_click', {
+                spot_name: currentResult.place,
+                location: currentResult.location
+            });
+        }
+        
+        // 外部アプリとして開く
+        window.location.href = mapUrl;
+    } else {
+        // Web：Perplexity で検索
+        const searchQuery = `${currentResult.place}（${currentResult.location}）のアクセス方法とおすすめポイント`;
+        const perplexityUrl = `https://www.perplexity.ai/search?q=${encodeURIComponent(searchQuery)}`;
+        
+        // GA4イベント: AI検索クリック
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'ai_search_click', {
+                spot_name: currentResult.place,
+                location: currentResult.location,
+                search_query: searchQuery
+            });
+        }
+        
+        window.open(perplexityUrl, '_blank');
+    }
+});
 
         // 季節マッチング関数
         const matchesSeason = (activitySeason, filterSeason) => {
