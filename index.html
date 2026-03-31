@@ -498,7 +498,7 @@
             background: rgba(0, 0, 0, 0.55);
             z-index: 2000;
             display: flex;
-            align-items: flex-end; /* 画面下から出現 */
+            align-items: flex-end;
             justify-content: center;
             opacity: 0;
             pointer-events: none;
@@ -873,33 +873,33 @@
             <div class="app-promo-handle"></div>
 
             <div class="app-promo-badge">
-                <span>🗺️</span>
-                <span>Google マップ連携</span>
+                <span>✨</span>
+                <span>アプリ限定機能</span>
             </div>
 
-            <h2 class="app-promo-title">アプリならもっと<span>スムーズ</span>に<br>お出かけできる！</h2>
-            <p class="app-promo-sub">スポットが決まったら、ワンタップで<br>Google マップに移動できます。</p>
+            <h2 class="app-promo-title">気に入ったスポットを<span>保存・シェア</span>できる！</h2>
+            <p class="app-promo-sub">アプリなら「また行きたい！」をすぐ残せて、<br>友だちへの共有もワンタップで完了。</p>
 
             <div class="app-promo-features">
+                <div class="app-promo-feature">
+                    <div class="app-promo-feature-icon">🔖</div>
+                    <div class="app-promo-feature-text">
+                        <div class="app-promo-feature-title">お気に入りスポットを保存</div>
+                        <div class="app-promo-feature-desc">気になったスポットをいつでも見返せる。次のお出かけ計画もスムーズ。</div>
+                    </div>
+                </div>
+                <div class="app-promo-feature">
+                    <div class="app-promo-feature-icon">🔗</div>
+                    <div class="app-promo-feature-text">
+                        <div class="app-promo-feature-title">友だち・家族にすぐ共有</div>
+                        <div class="app-promo-feature-desc">「ここ行かない？」をLINEやSNSにワンタップで送れる。</div>
+                    </div>
+                </div>
                 <div class="app-promo-feature">
                     <div class="app-promo-feature-icon">📍</div>
                     <div class="app-promo-feature-text">
                         <div class="app-promo-feature-title">Google マップに即ジャンプ</div>
-                        <div class="app-promo-feature-desc">ルート・営業時間・口コミをすぐ確認。アプリ切り替え不要。</div>
-                    </div>
-                </div>
-                <div class="app-promo-feature">
-                    <div class="app-promo-feature-icon">⚡</div>
-                    <div class="app-promo-feature-text">
-                        <div class="app-promo-feature-title">サクサク動作</div>
-                        <div class="app-promo-feature-desc">ネイティブアプリで読み込みが速い。外出先でもストレスなし。</div>
-                    </div>
-                </div>
-                <div class="app-promo-feature">
-                    <div class="app-promo-feature-icon">📱</div>
-                    <div class="app-promo-feature-text">
-                        <div class="app-promo-feature-title">ホーム画面からすぐ起動</div>
-                        <div class="app-promo-feature-desc">「今日暇！」と思ったらワンタップで開ける。</div>
+                        <div class="app-promo-feature-desc">ルート・営業時間・口コミをその場で確認。アプリ切り替え不要。</div>
                     </div>
                 </div>
             </div>
@@ -930,18 +930,14 @@
         // =====================================================
         const AppPromo = (() => {
             const STORAGE_KEY = 'app_promo_shown_count';
-            const MAX_SHOW_COUNT = 3; // 合計3回まで表示
+            const MAX_SHOW_COUNT = 3;
 
-            // Android判定（WebViewは除く、Instagram内ブラウザは含む）
             function isAndroidBrowser() {
                 const ua = navigator.userAgent;
                 const isAndroid = /Android/i.test(ua);
                 if (!isAndroid) return false;
-
-                // 純粋なWebViewのみ除外（wv フラグ、かつInstagramでない）
                 const isInstagram = /Instagram/i.test(ua);
                 const isNativeWebView = /wv\b/.test(ua) && !isInstagram;
-
                 return !isNativeWebView;
             }
 
@@ -961,13 +957,10 @@
 
             function show() {
                 if (!shouldShow()) return;
-                // 次フレームで表示してCSSトランジションを効かせる
                 requestAnimationFrame(() => {
                     overlay.classList.add('visible');
                 });
                 incrementShowCount();
-
-                // GA4イベント
                 if (typeof gtag !== 'undefined') {
                     gtag('event', 'app_promo_shown', {
                         show_count: getShowCount()
@@ -979,12 +972,10 @@
                 overlay.classList.remove('visible');
             }
 
-            // オーバーレイ背景タップで閉じる
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) hide();
             });
 
-            // スワイプダウンで閉じる
             let touchStartY = 0;
             const sheet = document.getElementById('app-promo-sheet');
             sheet.addEventListener('touchstart', (e) => {
@@ -992,7 +983,7 @@
             }, { passive: true });
             sheet.addEventListener('touchend', (e) => {
                 const diff = e.changedTouches[0].clientY - touchStartY;
-                if (diff > 60) hide(); // 60px以上下にスワイプで閉じる
+                if (diff > 60) hide();
             }, { passive: true });
 
             return { show, hide };
@@ -1082,7 +1073,6 @@
             window.addEventListener('resize', updateCardHeight);
         }
 
-        // アプリ内かWebかを判定
         const isInApp = /wv|WebView/i.test(navigator.userAgent);
 
         if (isInApp) {
@@ -1225,26 +1215,22 @@
                 });
             }
 
-            // Androidブラウザ且つ表示上限未達なら訴求を挟む
             AppPromo.show();
 
             mainCard.classList.remove('flipped');
             setTimeout(updateCardHeight, 50);
         });
 
-        // ポップアップのCTAボタン（実際のストアURLに変更してください）
         document.getElementById('app-promo-cta-btn').addEventListener('click', () => {
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'app_promo_cta_click', {
                     platform: 'android'
                 });
             }
-            // ▼ Google Play ストアのURLに変更してください
             window.open('https://play.google.com/store/apps/details?id=com.seisaily.app', '_blank');
             AppPromo.hide();
         });
 
-        // スキップボタン
         document.getElementById('app-promo-skip-btn').addEventListener('click', () => {
             if (typeof gtag !== 'undefined') {
                 gtag('event', 'app_promo_skip', {
